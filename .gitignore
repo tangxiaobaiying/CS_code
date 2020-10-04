@@ -142,3 +142,8 @@ dmypy.json
 cython_debug/
 
 #以上忽略为python文件
+
+#exe文件
+*.exe
+#.vscode文件
+.vscode/*

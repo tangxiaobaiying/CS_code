@@ -13,6 +13,7 @@ def string_match(string,sub_str):
         for j in range(len_sub):
             if string[i+j]==sub_str[j]:
                 match_count+=1
+        
         if match_count==len_sub:
             return i+1
     return -1
