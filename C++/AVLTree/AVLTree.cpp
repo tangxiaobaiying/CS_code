@@ -2,7 +2,7 @@
 #include "AVLNode.h"
 using namespace std;
 class AVLTree{
-    // test 台式
+    // test 
 private:
     AVLNode *root;
 public:
