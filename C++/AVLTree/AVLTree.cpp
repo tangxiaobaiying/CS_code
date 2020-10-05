@@ -244,7 +244,7 @@ int main(){
             
             // node->key=val;
             // node=new AVLNode(val);
-            myAVLTree.Insert(val);
+            myAVLTree.insert(val);
         }
     }
     cout<<"**********Ç°Ðò±éÀú***********"<<endl;
