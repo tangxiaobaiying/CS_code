@@ -2,200 +2,197 @@
 #include "AVLNode.h"
 using namespace std;
 class AVLTree{
-    // test 
 private:
     AVLNode *root;
 public:
     AVLTree();
     AVLNode *GetRoot();
     int _Hight(AVLNode *);
-    AVLNode *search(int key);
+    bool search(int key);
     AVLNode *Insert(int,AVLNode *);
     void insert(int);
     int BalanceFactor(AVLNode *,AVLNode *);
-    void Rotate(AVLNode *,AVLNode *);
-    void RotateLL(AVLNode *);
-    void RotateRR(AVLNode *);
-    void RotateLR(AVLNode *);
-    void RotateRL(AVLNode *);
+    AVLNode *Rotate(AVLNode *);
+    AVLNode *RotateLL(AVLNode *);
+    AVLNode *RotateRR(AVLNode *);
+    AVLNode *RotateLR(AVLNode *);
+    AVLNode *RotateRL(AVLNode *);
     void PreOrderPrint(AVLNode *);
     void InOrderPrint(AVLNode *);
     void SufOrderPrint(AVLNode *);
 };
-
 AVLTree::AVLTree(){
     this->root=NULL;
 }
 AVLNode *AVLTree::GetRoot(){
     return this->root;
 }
-AVLNode *AVLTree::search(int key){
-    AVLNode *temproot=this->root;
-    while(true){
-        if(temproot->key=key)
-            return temproot;
-        else if(temproot->key<key)
-            temproot=temproot->R_child;
-        else
-            temproot=temproot->L_child;
-    }
+int AVLTree::_Hight(AVLNode *root){
+    if(root==NULL)
+        return 0;
+    int left=_Hight(root->L_child);
+    int right=_Hight(root->R_child);
+    return  left>right?left+1:right+1;
 }
-// int AVLTree::GetMaxIndex(){
-//     return 
-// }
-void AVLTree::insert(int val){
-    this->root=this->Insert(val,this->root);
+bool AVLTree::search(int key){
+    AVLNode *temp=this->root;
+    while(true){
+        if(temp==NULL)
+            return false;
+        else{
+            if(temp->key==key)
+                return true;
+            else if(temp->key>key)
+                temp=temp->L_child;
+            else if(temp->key<key)
+                temp=temp->R_child;
+        }
+    }
 }
 
-AVLNode *AVLTree::Insert(int val,AVLNode *root){
-    if(root==NULL){
-        this->root=new AVLNode(val);
-        cout<<root<<"------intital"<<endl;
-    }
-    AVLNode *temproot=this->root;    
-    while(true){
-        if(temproot==NULL){
-            temproot=new AVLNode(val);
-            cout<<temproot->key<<"------------temproot"<<endl;
-            break;
-        }
-        else if(temproot->key<=val)
-        {
-            temproot=temproot->R_child;
-        }
-        else if(temproot->key>val){
-            temproot=temproot->L_child;
-        }
-    }
-    AVLNode *L_subtree=this->root->L_child;
-    AVLNode *R_subtree=this->root->R_child;
-    this->Rotate(L_subtree,R_subtree);
-    this->PreOrderPrint(root);
+int AVLTree::BalanceFactor(AVLNode *left,AVLNode *right){
+    return this->_Hight(left)-this->_Hight(right);
 }
 
-void AVLTree::Rotate(AVLNode *L_sub,AVLNode *R_sub){
-    AVLNode *L_TreeSub=L_sub;
-    AVLNode *R_TreeSub=R_sub;
-    int bf;//根节点的两个子树
+/*LL��ת    
+          k1                                k2
+        /    \                            /    \
+       k2     h-1       --->             h      k1
+      /  \                                     /  \
+     h    h-1                                h-1  h-1
+*/
+AVLNode *AVLTree::RotateLL(AVLNode *root){
+    AVLNode *node=root->L_child;
+    root->L_child=node->R_child;
+    node->R_child=root;
+    // this->root=node;
+    return node;
+}
+
+/*LR��ת    
+          k1                                 k3
+        /    \                           /       \
+       k2     h-1       --->            k2        k1
+      /  \                            /   \     /    \
+    h-1   k3                        h-1    h-1  h     h-1
+         /  \
+       h-1   h                             
+*/
+AVLNode *AVLTree::RotateLR(AVLNode *root){
+    root->L_child=RotateRR(root->L_child);
+    return RotateLL(root);
+}
+/*RR��ת    ��LL����
+          k1                                k2
+        /    \                            /    \
+      h-1     k2        --->             k1     h
+             /  \                       /  \
+            h-1  h                    h-1  h-1
+*/
+AVLNode *AVLTree::RotateRR(AVLNode *root){
+    AVLNode *node=root->R_child;
+    root->R_child=node->L_child;
+    node->L_child=root;
+    // this->root=node;
+    return node;
+}
+
+/*RL��ת    ��LR����
+          k1                                 k3
+        /    \                L           /       \
+      h-1     k2      --->              k1        k2
+             /  \                     /   \     /    \
+            k3   h-1                h-1    h-1  h     h-1
+           /  \
+         h-1   h                        
+*/
+AVLNode *AVLTree::RotateRL(AVLNode *root){
+    root->R_child=RotateLL(root->R_child);
+    return RotateRR(root);
+}
+
+AVLNode *AVLTree::Rotate(AVLNode *root){
+    AVLNode *left=root->L_child;
+    AVLNode *right=root->R_child;
+    int bf;
     int bf_;
-    cout<<"test"<<endl;
-    bf=this->BalanceFactor(L_TreeSub,R_TreeSub);
-    cout<<bf<<"--------bf"<<endl;
+    bf=this->BalanceFactor(left,right);
     if(bf>1){
-        bf_=this->BalanceFactor(L_TreeSub->L_child,L_TreeSub->R_child);
-        if(bf_>1){
-            this->RotateLL(this->root);
-            }
+        bf_=this->BalanceFactor(left->L_child,left->R_child);
+        if(bf_>0)
+        {   cout<<"LL------"<<endl;
+            return this->RotateLL(root);
+        }
         else
         {
-            this->RotateLR(this->root);
+            cout<<"LR------"<<endl;
+            return this->RotateLR(root);
         }
+        
     }
     else if(bf<-1){
-        bf_=this->BalanceFactor(R_TreeSub->L_child,R_TreeSub->R_child);
-        if(bf_>1)
-            this->RotateRL(this->root);
-        else
+        bf_=this->BalanceFactor(right->L_child,right->R_child);
+        if(bf_>=0){
+            cout<<"RL------"<<endl;
+            return this->RotateRL(root);
+        }else
         {
-            this->RotateRR(this->root);
+            cout<<"RR------"<<endl;
+            return this->RotateRR(root);
         }
     }
-    cout<<bf_<<"-------------_bf"<<endl;
-} 
-int AVLTree::BalanceFactor(AVLNode *L_sub,AVLNode *R_sub){
-    int left=this->_Hight(L_sub);
-    int right=this->_Hight(R_sub);
-    cout<<left<<"---------------leftsubtree"<<endl;
-    cout<<right<<"--------------rightsubtree"<<endl;
-    return left-right;
-}
-
-
-int AVLTree::_Hight(AVLNode *node){
-    AVLNode *temproot=node;
-    if(temproot==NULL)
-        return 0;
-    int high=0;
-    int left=this->_Hight(temproot->L_child);
-    int right=this->_Hight(temproot->R_child);
-    if(left>right)
-        high=left;
     else
-        high=right;
-    return high+1;
+    {
+        return root;
+    }
+    
 }
 
-void AVLTree::RotateLL(AVLNode *temproot){//hight_L>hight_R,左子树左儿子高度大于右子�?
-    AVLNode *node=temproot;//左右子树不平衡的节点
-    AVLNode *Newroot=node->L_child;//旋转节点后，node的左子树节点会顶替node的位�?
-    AVLNode *Newroot_Rchild=Newroot->R_child;
-    // AVLNode *nodeParent=node->Parent;
-    // if(nodeParent->L_child==node){
-    //     nodeParent->L_child=Newroot;//newnode的parent指针指向node的parent指针
-    // }
-    // else{
-    //     nodeParent->R_child=Newroot;//newnode的parent指针指向node的parent指针
-    // }
-    node->L_child=Newroot_Rchild;//newroot的右儿子变成node的左儿子�?
-    Newroot->R_child=node;
-    // node->Parent=Newroot;//node成为newnode的右子树节点
+void AVLTree::insert(int key){
+    this->root=this->Insert(key,this->root);
 }
+AVLNode *AVLTree::Insert(int key,AVLNode *root){
+    if(root==NULL){
+        root=new AVLNode(key);
+    }
+    else if(key>root->key){
+        root->R_child=Insert(key,root->R_child);
+        root=this->Rotate(root);
+    }
+    else if(key<root->key){
+        root->L_child=Insert(key,root->L_child);
+        root=this->Rotate(root);
+    }
+    return root;
+}
+//whileѭ����������ûŪ������
+//     else{
+//         AVLNode *temp=root;
+//         while(temp!=NULL){
+//             cout<<"start insert value"<<endl;
+//             if(temp->key<=key)
+//             {
+//                 cout<<temp->key<<"------------->temp"<<endl;
+//                 temp=temp->R_child;
+//                 // temp->R_child=new AVLNode(key);
+//                 cout<<temp->key<<"------------>temp.right"<<endl;
+//             }
+//             else
+//             {
+//                 cout<<temp->key<<"------------->temp"<<endl;
+//                 temp=temp->L_child;
+//                 // temp->L_child=new AVLNode(key);
+//                 cout<<temp->key<<"------------>temp.left"<<endl;
+//             }
+//         }
+//         temp=new AVLNode(key);
+//         // temp->key=key;
+//         cout<<temp->key<<"----------<ss"<<endl;
+//     }
+//     this->Rotate(root);
+//     return root;
+// }
 
-void AVLTree::RotateRR(AVLNode *temproot){//hight_L<hight_R,右子树右儿子高度大于左子�?
-    AVLNode *node=temproot;//左右子树不平衡的节点
-    AVLNode *Newroot=node->R_child;//旋转节点后，node的左子树节点会顶替node的位�?
-    AVLNode *Newroot_Lchild=Newroot->L_child;
-    // AVLNode *nodeParent=node->Parent;
-    // if(nodeParent->L_child==node){
-    //     nodeParent->L_child=Newroot;//newnode的parent指针指向node的parent指针
-    // }
-    // else{
-    //     nodeParent->R_child=Newroot;//newnode的parent指针指向node的parent指针
-    // }
-    node->R_child=Newroot_Lchild;//newroot的右儿子变成node的左儿子�?
-    Newroot->L_child=node;
-    // node->Parent=Newroot;//node成为newnode的右子树节点
-}
-void AVLTree::RotateLR(AVLNode *temproot){//左子树右儿子高度大于右子�?
-    AVLNode *node=temproot;//左右子树不平衡的节点
-    AVLNode *Newroot_Parent=node->L_child;//旋转节点后，node的左子树节点会顶替node的位�?
-    AVLNode *Newroot=Newroot_Parent->R_child;
-    // AVLNode *nodeParent=node->Parent;
-    // if(nodeParent->L_child==node){
-    //     nodeParent->L_child=Newroot;//newnode的parent指针指向node的parent指针
-    // }
-    // else{
-    //     nodeParent->R_child=Newroot;//newnode的parent指针指向node的parent指针
-    // }
-    Newroot_Parent->R_child=Newroot->L_child;
-    // Newroot->L_child->Parent=Newroot_Parent;
-    // Newroot_Parent->Parent=Newroot;
-    Newroot->L_child=Newroot_Parent;
-    node->L_child=Newroot->R_child;
-    // node->L_child->Parent=node;
-    Newroot->R_child=node;
-    // Newroot->R_child->Parent=Newroot;
-}
-void AVLTree::RotateRL(AVLNode *temproot){//右子树左儿子高度大于左子�?
-     AVLNode *node=temproot;//左右子树不平衡的节点
-    AVLNode *Newroot_Parent=node->R_child;//旋转节点后，node的左子树节点会顶替node的位�?
-    AVLNode *Newroot=Newroot_Parent->L_child;
-    // AVLNode *nodeParent=node->Parent;
-    // if(nodeParent->L_child==node){
-    //     nodeParent->L_child=Newroot;//newnode的parent指针指向node的parent指针
-    // }
-    // else{
-    //     nodeParent->R_child=Newroot;//newnode的parent指针指向node的parent指针
-    // }
-    Newroot_Parent->L_child=Newroot->R_child;
-    // Newroot->R_child->Parent=Newroot_Parent;
-    // Newroot_Parent->Parent=Newroot;
-    Newroot->R_child=Newroot_Parent;
-    node->R_child=Newroot->L_child;
-    // node->R_child->Parent=node;
-    Newroot->L_child=node;
-    // Newroot->L_child->Parent=Newroot;
-}
 void AVLTree::PreOrderPrint(AVLNode *temproot){
     AVLNode *temp=temproot;
     if(temp==NULL)
@@ -222,36 +219,44 @@ void AVLTree::SufOrderPrint(AVLNode *temproot){
 }
 
 int main(){
-    cout<<"test"<<endl;
     AVLTree myAVLTree;
     //int index=0;
     int val;
     // AVLNode *node;
-    AVLNode *root=myAVLTree.GetRoot();
     while(true){
+        cout<<"���루����0ֹͣ������";
         cin>>val;
         if(val==0){
-            cout<<"error";
+            cout<<"stop\n";
             break;
             }
         else
         {
-            // cout<<val<<"successful";
-            // cout<<node<<endl;
-            // node->key=val;
-            // cout<<index<<"  didi"<<endl;
-            // node->index=index;
-            
-            // node->key=val;
-            // node=new AVLNode(val);
             myAVLTree.insert(val);
+        }
+    }
+    AVLNode *root=myAVLTree.GetRoot();
+    cout<<"**********ǰ�����***********"<<endl;
+    myAVLTree.PreOrderPrint(root);
+    cout<<"\n***********�������**********"<<endl;
+    myAVLTree.InOrderPrint(root);
+    cout<<"\n**********�������***********"<<endl;
+    myAVLTree.SufOrderPrint(root);
+    while(true){
+        cout<<"\n����(����0ֹͣ����)";
+        cin>>val;
+        if(val==0){
+            cout<<"stop\n";
+            break;
+        }
+        else{
+            cout<<myAVLTree.search(val)<<endl;
         }
     }
     cout<<"**********ǰ�����***********"<<endl;
     myAVLTree.PreOrderPrint(root);
-    cout<<"**********�������***********"<<endl;
+    cout<<"\n***********�������**********"<<endl;
     myAVLTree.InOrderPrint(root);
-    cout<<"**********�������***********"<<endl;
+    cout<<"\n**********�������***********"<<endl;
     myAVLTree.SufOrderPrint(root);
-
 }
