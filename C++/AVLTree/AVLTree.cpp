@@ -4,7 +4,7 @@ using namespace std;
 class AVLTree{
 private:
     AVLNode *root;
-    //test
+    //test_test
 public:
     AVLTree();
     AVLNode *GetRoot();
