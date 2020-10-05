@@ -10,7 +10,8 @@ public:
     AVLNode *GetRoot();
     int _Hight(AVLNode *);
     AVLNode *search(int key);
-    void Insert(int);
+    AVLNode *Insert(int,AVLNode *);
+    void insert(int);
     int BalanceFactor(AVLNode *,AVLNode *);
     void Rotate(AVLNode *,AVLNode *);
     void RotateLL(AVLNode *);
@@ -42,11 +43,11 @@ AVLNode *AVLTree::search(int key){
 // int AVLTree::GetMaxIndex(){
 //     return 
 // }
-AVLNode AVLNode::insert(int val){
-    this->root=this->Insert(val,)
+void AVLTree::insert(int val){
+    this->root=this->Insert(val,this->root);
 }
 
-void AVLTree::Insert(int val,AVLNode *root){
+AVLNode *AVLTree::Insert(int val,AVLNode *root){
     if(root==NULL){
         this->root=new AVLNode(val);
         cout<<root<<"------intital"<<endl;
