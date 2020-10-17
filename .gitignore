@@ -147,3 +147,6 @@ cython_debug/
 *.exe
 #.vscode文件
 .vscode/*
+
+#java的class文件
+*.class
