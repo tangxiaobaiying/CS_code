@@ -60,6 +60,26 @@
   变量名.reshape((-1,n)),返回一个n列的数组，行数自动给定
 
   变量名.reshape((n,-1)),返回一个n行的数组，列数自动给定
+  
++ numpy.linalg.inv()
+
+  求矩阵的逆
+
++ numpy.dot(a,b)
+
+  求矩阵的点乘
+
++ X.transpose()
+
+  求矩阵的转置
+
++ numpy.square()
+
+  求矩阵的平方
+
++ numpy.average()
+
+  求矩阵的平均值
 
 
 
